@@ -15,23 +15,25 @@ export const assets = {
 }
 
 export const dummyTrailers = [
-    {
-        image: "https://www.livemint.com/lm-img/img/2025/06/21/600x338/Thalapathy_Vijay_Jana_Nayagan_1750531535329_1750531535621.png",
-        videoUrl: 'https://youtu.be/fJaAYcERf3Y'
-    },
-    {
-        image: "https://static.moviecrow.com/gallery/20251017/251672-TTT.jpeg",
-        videoUrl: 'https://youtu.be/KV_ibv-QstA'
-    },
-    {
-        image: "https://img.youtube.com/vi/1pHDWnXmK7Y/maxresdefault.jpg",
-        videoUrl: 'https://www.youtube.com/watch?v=1pHDWnXmK7Y'
-    },
-    {
-        image: "https://img.youtube.com/vi/umiKiW4En9g/maxresdefault.jpg",
-        videoUrl: 'https://www.youtube.com/watch?v=umiKiW4En9g'
-    },
+  {
+    image: "https://images.justwatch.com/poster/332215539/s718/jana-nayagan.jpg",
+    videoUrl: "https://www.youtube-nocookie.com/embed/fJaAYcERf3Y"
+  },
+  {
+    image: "https://static.moviecrow.com/gallery/20251017/251672-TTT.jpeg",
+    videoUrl: "https://www.youtube-nocookie.com/embed/KV_ibv-QstA"
+  },
+  {
+    image: "https://img.youtube.com/vi/umiKiW4En9g/maxresdefault.jpg",
+    videoUrl: "https://www.youtube-nocookie.com/embed/umiKiW4En9g"
+  },
+  {
+    image: "https://img.youtube.com/vi/VgVCc0j19Uc/maxresdefault.jpg",
+    videoUrl: "https://www.youtube-nocookie.com/embed/VgVCc0j19Uc"
+  }
 ]
+
+
 
 const dummyCastsData = [
     { "name": "Milla Jovovich", "profile_path": "https://image.tmdb.org/t/p/original/usWnHCzbADijULREZYSJ0qfM00y.jpg", },
