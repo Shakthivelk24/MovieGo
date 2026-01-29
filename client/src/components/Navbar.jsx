@@ -11,8 +11,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   return (
     <div className="fixed top-0 left-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5">
-      <Link to="/" className="max-md:flex-1">
+      <Link to="/" className="max-md:flex-1 flex items-center gap-2">
         <img src={assets.logo} alt="Logo" className="w-25 h-auto" />
+        <p className="text-2xl font-bold text-white">
+          <span className="text-red-400 text-3xl">M</span>ovieGo
+        </p>
       </Link>
       <div
         className={`max-md:absolute max-md:top-0 max-md:left-0 max-md:font-medium max-md:text-lg z-50 flex flex-col md:flex-row items-center max-md:justify-center gap-8 min-md:px-8 py-3 max-md:h-screen min-md:rounded-full backdrop-blur bg-black/70 md:bg-white/10 md:border border-gray-300/20 overflow-hidden transition-[width] duration-300 ${isMenuOpen ? "max-md:w-full" : "max-md:w-0 max-md:overflow-hidden"}`}
@@ -26,6 +29,7 @@ const Navbar = () => {
             (scrollTo(0, 0), setIsMenuOpen(false));
           }}
           to="/"
+          className="hover:text-red-400"
         >
           Home
         </Link>
@@ -34,30 +38,37 @@ const Navbar = () => {
             (scrollTo(0, 0), setIsMenuOpen(false));
           }}
           to="/movies"
+          className="hover:text-red-400"
         >
           Movies
         </Link>
         <Link
           onClick={() => {
-            scrollTo(0, 0); setIsMenuOpen(false);
+            scrollTo(0, 0);
+            setIsMenuOpen(false);
           }}
           to="/"
+          className="hover:text-red-400"
         >
           Theaters
         </Link>
         <Link
           onClick={() => {
-            scrollTo(0, 0); setIsMenuOpen(false);
+            scrollTo(0, 0);
+            setIsMenuOpen(false);
           }}
           to="/"
+          className="hover:text-red-400"
         >
           Releases
         </Link>
         <Link
           onClick={() => {
-            scrollTo(0, 0); setIsMenuOpen(false);
+            scrollTo(0, 0);
+            setIsMenuOpen(false);
           }}
           to="/favorite"
+          className="hover:text-red-400"
         >
           Favorites
         </Link>
