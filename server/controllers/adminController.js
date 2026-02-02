@@ -4,12 +4,13 @@ import User from "../models/User.js";
 
 
 // API to check if user is admin
-export const isAdmin = async (res, req) => {
+export const isAdmin = async (req, res) => {
   res.status(200).json({
     success: true,
     isAdmin: true,
   });
 };
+
 
 // API to get dashboard data
 export const getDashboardData = async (req, res) => {
