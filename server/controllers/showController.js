@@ -21,7 +21,7 @@ export const addNewShow = async (req, res) => {
     const { movieId, showsInput, showPrice } = req.body;
     let movie = await Movie.findById(movieId);
     if (!movie) {
-      const movie = movies.find(
+      let movie = movies.find(
         (mov) => mov.id.toString() === movieId.toString(),
       );
       const movieDetailsResponse = movie;
@@ -50,7 +50,7 @@ export const addNewShow = async (req, res) => {
       show.time.forEach((time) => {
         const dateTimeString = `${showDate}T${time}`;
         showsToCreate.push({
-          movie: movieId,
+          movie: movieId.toString(),
           showDateTime: new Date(dateTimeString),
           showPrice: showPrice,
           occupiedSeats: {},
@@ -66,50 +66,54 @@ export const addNewShow = async (req, res) => {
       .json({ success: true, message: "New shows added successfully" });
   } catch (error) {
     console.error("Error adding new show:", error);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: "Failed to add new show",
-        message: error.message,
-      });
+    res.status(500).json({
+      success: false,
+      message: "Failed to add new show",
+      message: error.message,
+    });
   }
 };
 
 // API to get all shows from the database
-export const getAllShows = async (req,res) =>{
+export const getAllShows = async (req, res) => {
   try {
-    const shows = await Show.find({showDateTime:{$gte:new Date()}}).populate('movie').sort({showDateTime: 1});
-    
-    // Filter unique Shows 
-    const uniqueSHows = new Set(shows.map(show=>show.movie))
+    const shows = await Show.find({ showDateTime: { $gte: new Date() } })
+      .populate("movie")
+      .sort({ showDateTime: 1 });
 
-    res.status(200).json({success:true,shows:Array.from(uniqueSHows)});
+    // Filter unique Shows
+    const uniqueSHows = new Set(shows.map((show) => show.movie));
 
+    res.status(200).json({ success: true, shows: Array.from(uniqueSHows) });
   } catch (error) {
     console.error("Error fetching shows:", error);
-    res.status(500).json({success:false,message:"Failed to fetch shows"});
+    res.status(500).json({ success: false, message: "Failed to fetch shows" });
   }
-}
+};
 
 // API to get shows for a specific movie
-export const getShow = async (req,res) =>{
-   try {
-       const {movieId} = req.params;
-       // get all upcoming shows for the movie
-       const shows = await Show.find({movie:movieId,showDateTime:{$gte:new Date()}});
-       const movie = await Movie.findById(movieId);
-       const dateTime = {};
-       shows.forEach((show) => {
-            const date = show.showDateTime.toISOString().split('T')[0];
-            if(!dateTime[date]){
-                dateTime[date] = [];
-            }
-            dateTime[date].push({time:show.showDateTime,showId:show._id})
-       });
-       res.status(200).json({success:true,movie,dateTime});
-   } catch (error) {
+export const getShow = async (req, res) => {
+  try {
+    const { movieId } = req.params;
+    // get all upcoming shows for the movie
+    const shows = await Show.find({
+      movie: movieId,
+      showDateTime: { $gte: new Date() },
+    });
+    const movie = await Movie.findById(movieId);
+    const dateTime = {};
+    shows.forEach((show) => {
+      const date = show.showDateTime.toISOString().split("T")[0];
+      if (!dateTime[date]) {
+        dateTime[date] = [];
+      }
+      dateTime[date].push({ time: show.showDateTime, showId: show._id });
+    });
+    res.status(200).json({ success: true, movie, dateTime });
+  } catch (error) {
     console.error("Error fetching shows for movie:", error);
-    res.status(500).json({success:false,message:"Failed to fetch shows for movie"});
-   }
-}
+    res
+      .status(500)
+      .json({ success: false, message: "Failed to fetch shows for movie" });
+  }
+};
