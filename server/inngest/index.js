@@ -54,7 +54,7 @@ const syncUserUpdation = inngest.createFunction(
 const relaseSeatsAndDeleteBooking = inngest.createFunction(
     {id:"release-seats-delete-booking"},
     {event:"app/checkpayment"},
-    async (event,step) =>{
+    async ({event,step}) =>{
          const tenMintesLater = new Date(Date.now() + 10 *60 *1000);
          await step.sleepUntil('wait-for-10-minutes',tenMintesLater);
 
@@ -95,8 +95,6 @@ const sendBookingConfirmationEmail = inngest.createFunction(
         to:booking.user.email,
         subject:`Payment Confirmation: ${booking.show.movie.title} booked - MovieGo`,
         body:`<h1>Payment Confirmed!</h1>
-        <p>Dear ${booking.user.name},</p>
-        <p>Your payment for the movie <strong>${booking.show.movie.title}</strong> on <strong>${booking.show.date.toDateString()}</strong> at <strong>${booking.show.time}</strong> has been confirmed.</p>
         <p>Enjoy your movie!</p>
         <p> Thank you for choosing MovieGo.</p>
         <p>Best regards,<br/>MovieGo Team</p>`
