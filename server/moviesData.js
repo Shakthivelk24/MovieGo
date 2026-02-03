@@ -108,7 +108,7 @@ const data = [
     release_date: "2026-02-14",
     title: "Jana Nayagan",
     video: false,
-    vote_average: 7.9,
+    vote_average: 9.9,
     vote_count: 1200,
     credits: {
       cast: [
@@ -487,7 +487,7 @@ const data = [
     original_title: "Aaromaley",
     overview: "Poetic romantic drama.",
     popularity: 175.66,
-    poster_path: "/aaromaley_poster.jpg",
+    poster_path: "https://assets-in.bmscdn.com/iedb/movies/images/mobile/thumbnail/xlarge/aaromaley-et00468371-1762256128.jpg",
     release_date: "2025-11-10",
     title: "Aaromaley",
     video: false,
