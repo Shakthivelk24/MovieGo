@@ -95,6 +95,9 @@ const sendBookingConfirmationEmail = inngest.createFunction(
         to:booking.user.email,
         subject:`Payment Confirmation: ${booking.show.movie.title} booked - MovieGo`,
         body:`<h1>Payment Confirmed!</h1>
+        <p>Dear ${booking.user.name},</p>
+        <p>We are excited to inform you that your payment for the movie <strong>${booking.show.movie.title}</strong> has been successfully processed.</p>
+        <p><strong>Booking Details:</strong></p>
         <p>Enjoy your movie!</p>
         <p> Thank you for choosing MovieGo.</p>
         <p>Best regards,<br/>MovieGo Team</p>`
