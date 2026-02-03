@@ -8,12 +8,17 @@ import { inngest, functions } from "./inngest/index.js"
 import showRouter from './routes/showRoutes.js';
 import bookingRouter from './routes/bookingRoutes.js';
 import adminRouter from './routes/adminRoutes.js';
+import userRoutes from './routes/userRoutes.js';
+import { stripeWebhooks } from './controllers/stripeWebhooks.js';
 
 const app = express();
 
 const port = process.env.PORT || 4000;
 
 await connectDB();
+
+// Stripe webhook Route
+app.use('/api/stripe',express.raw({type:'application/json'}),stripeWebhooks);
 
 // Middleware
 app.use(express.json());
@@ -31,6 +36,7 @@ app.use("/api/inngest", serve({ client: inngest, functions }));
 app.use('/api/show',showRouter);
 app.use('/api/booking', bookingRouter);
 app.use('/api/admin', adminRouter);
+app.use('/api/user', userRoutes);
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
