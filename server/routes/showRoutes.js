@@ -6,7 +6,7 @@ const showRouter = express.Router();
 
 showRouter.get('/now-playing',protectAdmin,getNowPlayingMovies);
 showRouter.post('/add',protectAdmin,addNewShow);
-showRouter.get('/all',protectAdmin,getAllShows);
+showRouter.get('/all',getAllShows);
 showRouter.get('/:movieId',getShow);
 
 export default showRouter;
