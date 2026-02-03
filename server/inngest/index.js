@@ -2,6 +2,7 @@ import { Inngest } from "inngest";
 import User from "../models/User.js";
 import Booking from "../models/Booking.js";
 import Show from "../models/Show.js";
+import sendEmail from "../configs/nodeMailer.js";
 
 // Create a client to send and receive events
 export const inngest = new Inngest({ id: "movie-ticket-booking" });
@@ -76,10 +77,38 @@ const relaseSeatsAndDeleteBooking = inngest.createFunction(
     }
 )
 
+// Inngest function to send email when user books a show
+const sendBookingConfirmationEmail = inngest.createFunction(
+    {id:"send-booking-confirmation-email"},
+    {event:"app/show.booked"},
+    async ({event,step})=>{
+        const {bookingId} = event.data;
+
+        const booking = await Booking.findById(bookingId).populate({
+            path:'show',
+            populate:{
+                path:'movie',
+                model:'Movie'
+            }
+        }).populate('user');
+      await sendEmail({
+        to:booking.user.email,
+        subject:`Payment Confirmation: ${booking.show.movie.title} booked - MovieGo`,
+        body:`<h1>Payment Confirmed!</h1>
+        <p>Dear ${booking.user.name},</p>
+        <p>Your payment for the movie <strong>${booking.show.movie.title}</strong> on <strong>${booking.show.date.toDateString()}</strong> at <strong>${booking.show.time}</strong> has been confirmed.</p>
+        <p>Enjoy your movie!</p>
+        <p> Thank you for choosing MovieGo.</p>
+        <p>Best regards,<br/>MovieGo Team</p>`
+      })
+    }
+)
+
 
 export const functions = [
     syncUserCreation,
     syncUserDeletion,
     syncUserUpdation,
-    relaseSeatsAndDeleteBooking
+    relaseSeatsAndDeleteBooking,
+    sendBookingConfirmationEmail
 ];
