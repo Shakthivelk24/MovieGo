@@ -22,7 +22,7 @@ export const addNewShow = async (req, res) => {
     const { movieId, showsInput, showPrice } = req.body;
     let movie = await Movie.findById(movieId);
     if (!movie) {
-      let movie = movies.find(
+      movie = movies.find(
         (mov) => mov.id.toString() === movieId.toString(),
       );
       const movieDetailsResponse = movie;
