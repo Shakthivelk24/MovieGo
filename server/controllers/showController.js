@@ -1,6 +1,7 @@
 import movies from "../moviesData.js";
 import Movie from "../models/Movie.js";
 import Show from "../models/Show.js";
+import { inngest } from "../inngest/index.js";
 
 // API to get now playing movies from TMDB
 export const getNowPlayingMovies = async (req, res) => {
@@ -60,6 +61,14 @@ export const addNewShow = async (req, res) => {
     if (showsToCreate.length > 0) {
       await Show.insertMany(showsToCreate);
     }
+
+    // Trigger Inngest event for new show added
+    await inngest.send({
+      name: "app/show.added",
+      data: {
+        movieTitle: movie.title,
+      },
+    });
 
     res
       .status(201)
