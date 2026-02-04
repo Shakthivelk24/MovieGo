@@ -3,12 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import { assets } from "../assets/assets.js";
 import { MenuIcon, SearchIcon, TicketPlus, XIcon } from "lucide-react";
 import { useClerk, UserButton, useUser } from "@clerk/clerk-react";
+import { useAppContext } from "../context/AppContext.jsx";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { user } = useUser();
   const { openSignIn } = useClerk();
   const navigate = useNavigate();
+ 
+  const { favorites } = useAppContext();
+
   return (
     <div className="fixed top-0 left-0 z-50 w-full flex items-center justify-between px-6 md:px-16 lg:px-36 py-5">
       <Link to="/" className="max-md:flex-1 flex items-center gap-2">
@@ -62,16 +66,16 @@ const Navbar = () => {
         >
           Releases
         </Link>
-        <Link
-          onClick={() => {
-            scrollTo(0, 0);
-            setIsMenuOpen(false);
-          }}
-          to="/favorite"
-          className="hover:text-red-400"
-        >
-          Favorites
-        </Link>
+      {favorites.length > 0 && (<Link
+        onClick={() => {
+          scrollTo(0, 0);
+          setIsMenuOpen(false);
+        }}
+        to="/favorite"
+        className="hover:text-red-400"
+      >
+        Favorites
+      </Link>)}
       </div>
       <div className="flex items-center gap-8">
         <SearchIcon className="w-6 h-6 max-md:hidden cursor-pointer" />
