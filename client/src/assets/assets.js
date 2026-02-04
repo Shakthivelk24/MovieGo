@@ -20,16 +20,16 @@ export const dummyTrailers = [
     videoUrl: "https://www.youtube-nocookie.com/embed/fJaAYcERf3Y"
   },
   {
-    image: "https://static.moviecrow.com/gallery/20251017/251672-TTT.jpeg",
-    videoUrl: "https://www.youtube-nocookie.com/embed/KV_ibv-QstA"
+    image: "https://tse3.mm.bing.net/th/id/OIP.ahsJpGtDRy7DRFSRhhFIKgHaLH?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3",
+    videoUrl: "https://www.youtube-nocookie.com/embed/TnupaGUj1R8"
   },
   {
-    image: "https://img.youtube.com/vi/umiKiW4En9g/maxresdefault.jpg",
-    videoUrl: "https://www.youtube-nocookie.com/embed/umiKiW4En9g"
+    image: "https://tse4.mm.bing.net/th/id/OIP.8MLko-9dvE71dIWjs64_ugHaKs?cb=defcachec2&rs=1&pid=ImgDetMain&o=7&rm=3",
+    videoUrl: "https://www.youtube-nocookie.com/embed/TMQUFhWm8C0"
   },
   {
-    image: "https://img.youtube.com/vi/VgVCc0j19Uc/maxresdefault.jpg",
-    videoUrl: "https://www.youtube-nocookie.com/embed/VgVCc0j19Uc"
+    image: "https://m.media-amazon.com/images/M/MV5BMjhhMTk1MjEtZDAwNS00NDYxLTljYzEtYjhmYjlmMDhhNzQyXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
+    videoUrl: "https://www.youtube-nocookie.com/embed/dXCliyBQnWU"
   }
 ]
 
