@@ -6,13 +6,16 @@ import {
   UsersIcon,
 } from "lucide-react";
 import React, { useEffect, useState } from "react";
-import { dummyDashboardData } from "../../assets/assets";
 import Loading from "../../components/Loading";
 import Title from "../../components/admin/Title";
 import BlurCircle from "../../components/BlurCircle";
 import { dateFotmat } from "../../lib/dateFormat";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
+  const { axios, getToken, user } = useAppContext();
+
   const currency = import.meta.env.VITE_CURRENCY;
 
   const [dashboard, setDashboard] = useState({
@@ -21,7 +24,9 @@ const Dashboard = () => {
     activeShows: [],
     totalUsers: 0,
   });
+
   const [loading, setLoading] = useState(false);
+
   const dashboardCards = [
     {
       title: "Total Bookings",
@@ -45,12 +50,29 @@ const Dashboard = () => {
     },
   ];
   const fetchDashboardData = async () => {
-    setDashboard(dummyDashboardData);
-    setLoading(false);
+    try {
+      const { data } = await axios.get("/api/admin/dashboard", {
+        headers: { Authorization: `Bearer ${await getToken()}` },
+      });
+      if (data.success) {
+        setDashboard(data.dashboardData);
+        setLoading(false);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log("Error fetching dashboard data:", error);
+      toast.error("Failed to fetch dashboard data");
+    }
   };
+
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    if (user) {
+      fetchDashboardData();
+    }
+  }, [user]);
+
+  console.log(dashboard);
 
   return !loading ? (
     <>
