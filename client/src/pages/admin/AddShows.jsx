@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
-import { dummyShowsData } from "../../assets/assets";
 import Loading from "../../components/Loading";
 import Title from "../../components/admin/Title";
 import { CheckIcon, DeleteIcon, StarIcon } from "lucide-react";
 import { kConverter } from "../../lib/kConverter";
+import { useAppContext } from "../../context/AppContext";
+import toast from "react-hot-toast";
 
 const AddShows = () => {
+  const { axios, getToken, user } = useAppContext();
+
   const currency = import.meta.env.VITE_CURRENCY;
 
   const [nowPlaying, setNowPlaying] = useState([]);
@@ -14,45 +17,96 @@ const AddShows = () => {
   const [dateTimeInputs, setDateTimeInputs] = useState("");
   const [showPrice, setShowPrice] = useState("");
 
+  const [addingShow, setAddingShow] = useState(false);
   const fetchNowPlayingMovies = async () => {
-    setNowPlaying(dummyShowsData);
+    try {
+      const { data } = await axios.get("/api/show/now-playing", {
+        headers: { Authorization: `Bearer ${await getToken()}` },
+      });
+      if (data.success) {
+        setNowPlaying(data.movies);
+      }
+    } catch (error) {
+      console.log("Error fetching now playing movies:", error);
+    }
   };
 
-   const handleDateTimeAdd = () =>{
-         if(!dateTimeInputs) return;
-         const [date,time] = dateTimeInputs.split("T");
-         if(!date || !time) return;
-         setDateTimeSelection((prev)=>{
-             const times =  prev[date] || [];
-             if(!times.includes(time)){
-                return {
-                    ...prev,
-                    [date]: [...times, time]
-                }
-             }
-              return prev;
-         })
-   }
-   const handleDateTimeRemove = (date, time) =>{
-        setDateTimeSelection((prev)=>{
-           const filteredTimes = prev[date].filter(t => t !== time);
-           if(filteredTimes.length === 0){
-               const {[date]:_, ...rest} = prev;
-                return rest;
-           }
-           return {
-            ...prev,
-            [date]: filteredTimes,
-           }
-        })
+  const handleDateTimeAdd = () => {
+    if (!dateTimeInputs) return;
+    const [date, time] = dateTimeInputs.split("T");
+    if (!date || !time) return;
+    setDateTimeSelection((prev) => {
+      const times = prev[date] || [];
+      if (!times.includes(time)) {
+        return {
+          ...prev,
+          [date]: [...times, time],
+        };
+      }
+      return prev;
+    });
+  };
+  const handleDateTimeRemove = (date, time) => {
+    setDateTimeSelection((prev) => {
+      const filteredTimes = prev[date].filter((t) => t !== time);
+      if (filteredTimes.length === 0) {
+        const { [date]: _, ...rest } = prev;
+        return rest;
+      }
+      return {
+        ...prev,
+        [date]: filteredTimes,
+      };
+    });
+  };
+
+  const handleSubmit = async () => {
+    try {
+      setAddingShow(true);
+      if (
+        !selectedMovie ||
+        Object.keys(dateTimeSelection).length === 0 ||
+        !showPrice
+      ) {
+        setAddingShow(false);
+        return toast.error("Please fill all the fields");
+      }
+
+      const showsInput = Object.entries(dateTimeSelection).map(
+        ([date, time]) => ({ date, time }),
+      );
+      const payload = {
+        movieId: selectedMovie,
+        showsInput,
+        showPrice: Number(showPrice),
+      };
+
+      const { data } = await axios.post("/api/show/add", payload, {
+        headers: { Authorization: `Bearer ${await getToken()}` },
+      });
+      if (data.success) {
+        toast.success("Show(s) added successfully");
+        setSelectedMovie(null);
+        setDateTimeSelection({});
+        setDateTimeInputs("");
+        setShowPrice("");
+      } else {
+        toast.error(data.message);
+      }
+      setAddingShow(false);
+    } catch (error) {
+      console.log("Error adding shows:", error);
+      setAddingShow(false);
+      toast.error("Error adding shows. Please try again.");
     }
-   
+  };
 
   useEffect(() => {
-    fetchNowPlayingMovies();
-  }, []);
+    if (user) {
+      fetchNowPlayingMovies();
+    }
+  }, [user]);
 
- 
   return nowPlaying.length > 0 ? (
     <>
       <Title text1="Admin" text2="Add Shows" />
@@ -112,41 +166,60 @@ const AddShows = () => {
       </div>
 
       {/* Date Time Input */}
-       <div className="mt-6">
-             <label className="block text-sm font-medium mb-2">Select Date and Time</label>
-             <div className="inline-flex gap-5 border border-gray-600 p-1 pl-3 rounded-lg">
-                <input type="datetime-local" value={dateTimeInputs} onChange={(e) => setDateTimeInputs(e.target.value)}  className="outline-none rounded-md"/>
-                <button onClick={handleDateTimeAdd} className="bg-primary/80 text-white px-3 py-2 text-sm rounded-lg hover:bg-primary cursor-pointer">
-                    Add Time
-                </button>
-             </div>
-       </div>
-       {/* Display Selected Date and Time */}
-       {Object.keys(dateTimeSelection).length > 0 && (
-          <div className="mt-6">
-              <h2 className="mb-2">Selected Date-Time</h2>
-              <ul className="space-y-3">
-                 {Object.entries(dateTimeSelection).map(([date, times])=>(
-                    <li key={date}>
-                        <div className="font-medium">
-                           {date}
-                        </div>
-                        <div className="flex flex-wrap gap-2 mt-1 text-sm">
-                           {times.map((time) => (
-                              <div key={time} className="border border-primary px-2 py-1 flex items-center rounded">
-                                  <span>{time}</span>
-                                  <DeleteIcon onClick={() => handleDateTimeRemove(date, time)} width={15} className="ml-2 text-red-500 hover:text-red-700 cursor-pointer"/>
-                              </div>
-                           ))}
-                        </div>
-                    </li>
-                 ))}
-              </ul>
-          </div>
-       )}
-       <button className="bg-primary text-white px-8 py-2 mt-6 rounded hover:bg-primary/90 transition-all cursor-pointer">
-          Add Show(s)
-       </button>
+      <div className="mt-6">
+        <label className="block text-sm font-medium mb-2">
+          Select Date and Time
+        </label>
+        <div className="inline-flex gap-5 border border-gray-600 p-1 pl-3 rounded-lg">
+          <input
+            type="datetime-local"
+            value={dateTimeInputs}
+            onChange={(e) => setDateTimeInputs(e.target.value)}
+            className="outline-none rounded-md"
+          />
+          <button
+            onClick={handleDateTimeAdd}
+            className="bg-primary/80 text-white px-3 py-2 text-sm rounded-lg hover:bg-primary cursor-pointer"
+          >
+            Add Time
+          </button>
+        </div>
+      </div>
+      {/* Display Selected Date and Time */}
+      {Object.keys(dateTimeSelection).length > 0 && (
+        <div className="mt-6">
+          <h2 className="mb-2">Selected Date-Time</h2>
+          <ul className="space-y-3">
+            {Object.entries(dateTimeSelection).map(([date, times]) => (
+              <li key={date}>
+                <div className="font-medium">{date}</div>
+                <div className="flex flex-wrap gap-2 mt-1 text-sm">
+                  {times.map((time) => (
+                    <div
+                      key={time}
+                      className="border border-primary px-2 py-1 flex items-center rounded"
+                    >
+                      <span>{time}</span>
+                      <DeleteIcon
+                        onClick={() => handleDateTimeRemove(date, time)}
+                        width={15}
+                        className="ml-2 text-red-500 hover:text-red-700 cursor-pointer"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      <button
+        onClick={handleSubmit}
+        disabled={addingShow}
+        className="bg-primary text-white px-8 py-2 mt-6 rounded hover:bg-primary/90 transition-all cursor-pointer"
+      >
+        { addingShow ? "Adding Shows..." : "Add Shows" }
+      </button>
     </>
   ) : (
     <Loading />
