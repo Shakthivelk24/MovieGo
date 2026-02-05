@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 const HeroSection = () => {
   const navigate = useNavigate();
   return (
-    <div className='flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36 bg-[url("/background6.jpg")] bg-cover bg-center w-screen h-screen'>
+    <div className='flex flex-col items-start justify-center gap-4 px-6 md:px-16 lg:px-36  bg-[url("https://images.justwatch.com/poster/332215539/s718/jana-nayagan.jpg")] lg:bg-[url("/background6.jpg")] bg-cover bg-center w-screen h-screen'>
       {/* <img src={assets.marvelLogo} alt="Hero" className='max-h-11 lg:h-11 mt-20'/>
         <h1 className='text-5xl mg:text-[70px] md:leading-18 font-semibold max-w-110'>Guardians <br /> of the Galaxy</h1> */}
       <div className="flex items-center gap-4 text-yellow-300 drop-shadow-md mt-90 ml-18">
