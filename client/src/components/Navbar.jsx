@@ -46,7 +46,7 @@ const Navbar = () => {
         >
           Movies
         </Link>
-        <Link
+        {/* <Link
           onClick={() => {
             scrollTo(0, 0);
             setIsMenuOpen(false);
@@ -55,13 +55,13 @@ const Navbar = () => {
           className="hover:text-red-400"
         >
           Theaters
-        </Link>
+        </Link> */}
         <Link
           onClick={() => {
             scrollTo(0, 0);
             setIsMenuOpen(false);
           }}
-          to="/"
+          to="/movies"
           className="hover:text-red-400"
         >
           Releases
