@@ -7,20 +7,52 @@ import timeFormat from "../lib/timeFormat";
 import DateSelect from "../components/DateSelect";
 import MovieCard from "../components/MovieCard";
 import Loading from "../components/Loading";
+import { useAppContext } from "../context/AppContext";
+import toast from "react-hot-toast";
 
 const MovieDetails = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const [show, setshow] = useState(null);
+  const [show, setShow] = useState(null);
+
+  const { shows, axios, getToken, user, fetchFavoriteMovies, favorites } =
+    useAppContext();
+
   const getShow = async () => {
-    const show = dummyShowsData.find((show) => show._id === id);
-    if(show){
-        setshow({
-      movie: show,
-      dateTime: dummyDateTimeData,
-    });
+    try {
+      const { data } = await axios.get(`/api/show/${id}`);
+      if (data.success) {
+        setShow({
+          movie: data.movie,
+          dateTime: data.dateTime,
+        });
+      }
+    } catch (error) {
+      console.log("Error fetching show details:", error);
     }
   };
+
+  const handleFavorite = async () => {
+    try {
+      if (!user) {
+        return toast.error("Please login to add favorites");
+      }
+      const { data } = await axios.post(
+        "/api/user/update-favorites",
+        { movieId: id },
+        { headers: { Authorization: `Bearer ${await getToken()}` } }
+      );
+      if (data.success) {
+        await fetchFavoriteMovies();
+        toast.success(data.message);
+      }
+    } catch (error) {
+      console.log("Error updating favorites:", error);
+    }
+  };
+
+  
+
   useEffect(() => {
     getShow();
   }, [id]);
@@ -35,7 +67,7 @@ const MovieDetails = () => {
         />
         <div className="relative flex flex-col gap-3">
           <BlurCircle top="-100px" left="-100px" />
-          <p className="text-primary">English</p>
+          <p className="text-primary">{show.movie.original_language.toUpperCase()}</p>
           <h1 className="text-4xl font-semibold max-w-96 text-balance">
             {show.movie.title}
           </h1>
@@ -47,8 +79,8 @@ const MovieDetails = () => {
             {show.movie.overview}
           </p>
           <p>
-            {timeFormat(show.movie.runtime)} .{" "}
-            {show.movie.genres.map((genre) => genre.name).join(", ")} .{" "}
+            {timeFormat(show.movie.runtime)}{" "}
+            {show.movie.genres.map((genre) => genre.name).join(", ")}{" "}
             {show.movie.release_date.split("-")[0]}
           </p>
           <div className="flex items-center flex-wrap gap-4 mt-4">
@@ -62,13 +94,17 @@ const MovieDetails = () => {
             >
               Buy Tickets
             </a>
-            <button className="bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95">
-              <Heart className={`w-5 h-5`} />
+            <button
+              onClick={handleFavorite}
+              className="bg-gray-700 p-2.5 rounded-full transition cursor-pointer active:scale-95"
+            >
+              <Heart
+                className={`w-5 h-5 ${favorites.find((movie) => movie._id == id) ? "fill-red-500" : ""}`}
+              />
             </button>
           </div>
         </div>
       </div>
-
       <p className="mt-4">Your Favorite Cast</p>
       <div className="overflow-x-auto no-scrollbar mt-8 pb-4">
         <div className="flex items-center gap-4 w-max px-4">
@@ -85,18 +121,22 @@ const MovieDetails = () => {
         </div>
       </div>
       <DateSelect dataTime={show.dateTime} id={id} />
-      <p className="text-lg font-medium mt-20 mb-8">
-        You May Also Like
-      </p>
+      <p className="text-lg font-medium mt-20 mb-8">You May Also Like</p>
       <div className="flex flex-wrap max-sm:justify-center gap-8">
-         {dummyShowsData.slice(0,3).map((movie, index) => (
-           <MovieCard key={index} movie={movie} />
-         ))}
+        {shows.slice(0, 3).map((movie, index) => (
+          <MovieCard key={index} movie={movie} />
+        ))}
       </div>
       <div className="flex justify-center mt-20">
-         <button onClick={() => {navigate('/movies'); scrollTo(0, 0);}} className="px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium cursor-pointer">
-            Show More
-         </button>
+        <button
+          onClick={() => {
+            navigate("/movies");
+            scrollTo(0, 0);
+          }}
+          className="px-10 py-3 text-sm bg-primary hover:bg-primary-dull transition rounded-md font-medium cursor-pointer"
+        >
+          Show More
+        </button>
       </div>
     </div>
   ) : (
